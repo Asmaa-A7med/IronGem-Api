@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IronGemApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+56d40b039905417109964f085bda4bbf15811980")]
 [assembly: System.Reflection.AssemblyProductAttribute("IronGemApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IronGemApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
