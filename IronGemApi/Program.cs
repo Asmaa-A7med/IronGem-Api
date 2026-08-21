@@ -1,5 +1,7 @@
 using IronGemApi.Data;
 using IronGemApi.Models.Entities;
+using IronGemApi.Services;
+using IronGemApi.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +29,8 @@ namespace IronGemApi
                 .AddIdentity<ApplicationUser, IdentityRole<int>>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
+            
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             var app = builder.Build();
 
