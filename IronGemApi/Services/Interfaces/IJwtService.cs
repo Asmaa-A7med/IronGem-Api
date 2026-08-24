@@ -1,9 +1,10 @@
-﻿using IronGemApi.Models.Entities;
+﻿using IronGemApi.Models.DTOs.Auth;
+using IronGemApi.Models.Entities;
 
 namespace IronGemApi.Services.Interfaces
 {
     public interface IJwtService
     {
-        Task<string> GenerateTokenAsync(ApplicationUser user);
+        Task<JwtTokenDto> GenerateTokenAsync(ApplicationUser user);
     }
 }

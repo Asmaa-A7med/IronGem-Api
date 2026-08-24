@@ -1,4 +1,5 @@
 using IronGemApi.Data;
+using IronGemApi.Middleware;
 using IronGemApi.Models.Entities;
 using IronGemApi.Services;
 using IronGemApi.Services.Interfaces;
@@ -33,19 +34,19 @@ namespace IronGemApi
                 });
 
                 options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+                    {
+                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        {
+                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                            {
+                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
 
             // Add DbContext with SQL Server
@@ -54,11 +55,29 @@ namespace IronGemApi
                     builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add Identity services
-            builder.Services
-                .AddIdentity<ApplicationUser, IdentityRole<int>>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
-            
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                
+                options.Password.RequireDigit = true;
+                
+                options.Password.RequireLowercase = true;
+                
+                options.Password.RequireUppercase = true;
+                
+                options.Password.RequireNonAlphanumeric = true;
+                
+                options.User.RequireUniqueEmail = true;
+                
+                options.Lockout.DefaultLockoutTimeSpan =TimeSpan.FromMinutes(15);
+
+                options.Lockout.MaxFailedAccessAttempts = 5;
+
+                options.Lockout.AllowedForNewUsers = true;
+            })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<IJwtService, JwtService>();
@@ -97,6 +116,10 @@ namespace IronGemApi
             });
 
             var app = builder.Build();
+
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+            app.ConfigureExceptionHandler(logger);
 
             // Seed Roles
             using (var scope = app.Services.CreateScope())

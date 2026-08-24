@@ -14,3 +14,5 @@ obj/
 
 # Visual Studio Code
 .vscode/
+appsettings.json
+appsettings.Development.json

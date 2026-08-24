@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace IronGemApi.Models.DTOs.Auth
+namespace IronGemApi.Models.DTOs.Users
 {
-    public class RegisterDto
+    public class UpdateProfileDto
     {
         [Required]
         [StringLength(100)]
@@ -13,21 +13,10 @@ namespace IronGemApi.Models.DTOs.Auth
         public string LastName { get; set; } = null!;
 
         [Required]
-        [EmailAddress]
-        public string Email { get; set; } = null!;
-
-        [Required]
         [Phone]
         public string PhoneNumber { get; set; } = null!;
 
         [Required]
         public DateOnly BirthDate { get; set; }
-
-        [Required]
-        public string Password { get; set; } = null!;
-
-        [Required]
-        [Compare(nameof(Password))]
-        public string ConfirmPassword { get; set; } = null!;
     }
 }
