@@ -1,4 +1,5 @@
-﻿using IronGemApi.Models.Entities;
+﻿using IronGemApi.Models.DTOs.Auth;
+using IronGemApi.Models.Entities;
 using IronGemApi.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -21,7 +22,7 @@ namespace IronGemApi.Services
             _userManager = userManager;
         }
 
-        public async Task<string> GenerateTokenAsync(ApplicationUser user)
+        public async Task<JwtTokenDto> GenerateTokenAsync(ApplicationUser user)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
 
@@ -71,8 +72,12 @@ namespace IronGemApi.Services
                 expires: expiration,
                 signingCredentials: credentials);
 
-            return new JwtSecurityTokenHandler()
-                .WriteToken(token);
+            return new JwtTokenDto
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+
+                Expiration = expiration
+            };
         }
     }
 }

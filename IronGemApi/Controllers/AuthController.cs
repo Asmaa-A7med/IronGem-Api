@@ -1,4 +1,5 @@
 ﻿using IronGemApi.Models.DTOs.Auth;
+using IronGemApi.Models.DTOs.Users;
 using IronGemApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,7 @@ namespace IronGemApi.Controllers
                 return BadRequest(result);
             }
 
-            return Ok(result);
+            return StatusCode(StatusCodes.Status201Created, result);
         }
 
         [HttpPost("login")]
@@ -37,9 +38,12 @@ namespace IronGemApi.Controllers
             var result =
                 await _authService.LoginAsync(loginDto);
 
-            if (!result.IsSuccess)
+            if (result == null)
             {
-                return Unauthorized(result);
+                return Unauthorized(new
+                {
+                    message = "Invalid email or password."
+                });
             }
 
             return Ok(result);
@@ -65,6 +69,54 @@ namespace IronGemApi.Controllers
             }
 
             return Ok(profile);
+        }
+
+        [Authorize]
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileDto updateProfileDto)
+        {
+            var userId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var result = await _authService.UpdateProfileAsync(
+                int.Parse(userId),
+                updateProfileDto);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            var userId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var result = await _authService.ChangePasswordAsync(
+                int.Parse(userId),
+                changePasswordDto);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
     }
 }
